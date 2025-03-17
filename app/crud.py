@@ -17,13 +17,24 @@ def create_student(db: Session, student: schemas.StudentCreate):
         db.refresh(db_student)
         return db_student
 
-def get_students(db: Session):
+
+def get_students(db: Session, student_id: int):
     if STORAGE_BACKEND == "redis":
-        keys = redis_client.scan_iter("student:*")
-        students = [redis_client.hgetall(key) for key in keys]
-        return students
-    else:
-        return db.query(models.Student).all()
+        student_data = redis_client.hgetall(f"student:{student_id}")
+        topic_ids = redis_client.smembers(f"student:{student_id}:topics") 
+
+        topics = [redis_client.hget(f"topic:{tid}", "name") for tid in topic_ids]
+
+        return [{
+            "id": student_id,
+            "name": student_data.get("name", ""),
+            "number": student_data.get("number", ""),
+            "topics": topics
+        }]
+
+
+    # from db if not found in Redis
+    return db.query(models.Student).filter(models.Student.id == student_id).first()
 
 def delete_student(db: Session, student_id: int):
     if STORAGE_BACKEND == "redis":
@@ -52,13 +63,17 @@ def create_topic(db: Session, topic: schemas.TopicCreate):
         db.refresh(db_topic)
         return db_topic
 
-def get_topics(db: Session):
+def get_topics(db: Session, tid: int):
     if STORAGE_BACKEND == "redis":
-        keys = redis_client.scan_iter("topic:*")  # Use scan_iter for better performance
-        topics = [redis_client.hgetall(key) for key in keys]
-        return [{"id": key.split(":")[1], **topic} for key, topic in zip(keys, topics)]
+        topic_data = redis_client.hgetall(f"topic:{tid}")
+        if topic_data:
+            return [{
+                "id": tid,
+                "name": topic_data.get("name", ""),
+                
+            }]
     else:
-        return db.query(models.Topic).all()
+        return db.query(models.Topic).filter(models.Topic.id == tid).first()
 
 
 def assign_topic(db: Session, student_id: int, topic_id: int):

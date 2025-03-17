@@ -10,8 +10,8 @@ def create_topic(topic: schemas.TopicCreate, db: Session = Depends(get_db)):
     return crud.create_topic(db, topic)
 
 @router.get("/topics")
-def get_topics(db: Session = Depends(get_db)):
-    return crud.get_topics(db)
+def get_topics(topic_id: int, db: Session = Depends(get_db)):
+    return crud.get_topics(db, topic_id)
 
 @router.post("/assign/{student_id}/{topic_id}")
 def assign_topic(student_id: int, topic_id: int, db: Session = Depends(get_db)):

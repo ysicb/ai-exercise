@@ -10,8 +10,8 @@ def create_student(student: schemas.StudentCreate, db: Session = Depends(get_db)
     return crud.create_student(db, student)
 
 @router.get("/students", response_model=list[schemas.StudentResponse])
-def get_students(db: Session = Depends(get_db)):
-    return crud.get_students(db)
+def get_students(student_id: int, db: Session = Depends(get_db)):
+    return crud.get_students(db, student_id)
 
 @router.delete("/students/{student_id}")
 def delete_student(student_id: int, db: Session = Depends(get_db)):
