@@ -63,4 +63,4 @@ docker-compose up --build
 
 **6. Access the API**
 
-Swagger Docs: http://localhost:8000/docs
+Swagger Docs: http://localhost:8000/docs   or  http://localhost:9090/docs
