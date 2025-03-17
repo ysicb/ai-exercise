@@ -1,4 +1,4 @@
-FastAPI Project 
+##FastAPI Project## 
 
 Overview
 This project is a FastAPI-based application that demonstrates API development, database integration, environment management, and AI-powered image summarization. It uses Docker and Docker Compose for service orchestration, PostgreSQL and Redis for data storage, and OpenAI's GPT-4o for text summarization.
